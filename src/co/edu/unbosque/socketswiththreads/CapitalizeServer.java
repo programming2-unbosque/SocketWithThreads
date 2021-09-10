@@ -14,21 +14,24 @@ import java.util.concurrent.Executors;
  */
 public class CapitalizeServer {
 
-    /**
-     * Runs the server. When a client connects, the server spawns a new thread to do
-     * the servicing and immediately returns to listening. The application limits
-     * the number of threads via a thread pool (otherwise millions of clients could
-     * cause the server to run out of resources by allocating too many threads).
-     */
+    static int PORT = 59897;
+
     public static void main(String[] args) throws Exception {
 
-        try (var listener = new ServerSocket(59897)) {
+        // the socket is automatically closed at the end of the block
+        // a ServerSocket is created for listening on the specified port
+        try (var listener = new ServerSocket(PORT)) {
 
-            System.out.println("The capitalization server is running...");
+            System.out.format("The capitalization server is running and listening on port %d...", PORT);
+            System.out.println("\n");
 
-            var pool = Executors.newFixedThreadPool(20);
+            // nThreads limits the number of clients server is able to attend
+            // this technique is recommended in scenarios with a very limited quantity of machine resources
+            var pool = Executors.newFixedThreadPool(3);
 
             while (true) {
+                // when server accepts a client, a new Socket for handling communication with that specific client is created
+                // the new Socket is passed to the executor pool assigning it a new thread for execution
                 pool.execute(new Capitalizer(listener.accept()));
             }
 

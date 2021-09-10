@@ -16,7 +16,8 @@ public class Capitalizer implements Runnable {
     @Override
     public void run() {
 
-        safePrintln("Connected: " + socket);
+        safePrintln("Connected to client " + socket);
+        safePrintln("");
 
         try {
 
@@ -25,23 +26,29 @@ public class Capitalizer implements Runnable {
 
             while (in.hasNextLine()) {
                 var message = in.nextLine();
-                safePrintln("The message received is: " + message);
+                safePrintln("Message received: " + message);
+
                 var newMessage = message.toUpperCase();
-                safePrintln("The message to be returned is: " + newMessage);
                 out.println(newMessage);
+                safePrintln("Message returned: " + newMessage);
+                safePrintln("");
             }
 
         } catch (Exception e) {
             safePrintln("Error:" + socket);
+            safePrintln("");
         } finally {
             try {
                 socket.close();
             } catch (IOException e) {
             }
-            safePrintln("Closed: " + socket);
+            safePrintln("Socket closed: " + socket);
+            safePrintln("");
         }
     }
 
+    // variation of System.out for printing to command line inside a Thread
+    // https://www.baeldung.com/java-synchronized
     public void safePrintln(String s) {
         synchronized (System.out) {
             System.out.println(s);
